@@ -1,38 +1,26 @@
-// Tiny custom pixel atlas, intentionally stylized rather than geographically precise.
-const land = [
- [[44,43],[64,31],[91,28],[105,35],[116,46],[111,61],[96,66],[89,81],[72,80],[62,68],[49,65],[40,55]],
- [[113,82],[129,93],[136,111],[127,128],[117,144],[108,127],[104,109]],
- [[185,41],[201,31],[217,34],[229,45],[247,41],[266,50],[281,59],[278,72],[257,79],[248,94],[230,98],[222,113],[207,108],[197,91],[182,84],[170,66]],
- [[278,93],[289,104],[292,122],[284,143],[276,160],[265,151],[264,132]],
- [[314,48],[339,39],[364,45],[380,55],[403,53],[425,64],[440,77],[426,89],[407,86],[393,99],[378,95],[365,111],[350,107],[342,92],[324,86],[313,70]],
- [[393,112],[410,121],[419,141],[414,164],[400,178],[389,158],[384,139]],
- [[448,115],[460,123],[467,137],[460,145],[450,135]],
- [[479,48],[501,40],[521,46],[533,58],[520,66],[502,62],[488,70]],
- [[531,121],[543,130],[548,144],[541,154],[530,149]],
- [[565,160],[581,168],[587,184],[579,196],[563,190]],
- [[150,139],[158,147],[155,158],[147,152]],
- [[330,118],[338,127],[336,137],[328,132]]
+// Hand-inked simplified continent outlines: intentionally organic, not a tiled vector UI.
+const paths=[
+"M 73 112 L 95 91 123 74 151 68 177 75 192 91 213 101 225 121 217 137 204 144 196 163 183 176 169 178 153 171 145 158 129 153 115 143 105 129 89 125 78 120 Z",
+"M 201 184 L 216 190 231 209 236 230 229 247 218 269 211 288 200 300 191 286 185 266 188 245 184 222 189 205 Z",
+"M 316 91 L 335 79 358 76 374 83 386 95 405 91 420 101 438 109 454 116 467 129 459 143 445 147 430 159 414 166 399 179 388 191 375 185 361 174 348 164 337 151 327 137 314 126 304 112 Z",
+"M 378 187 L 393 194 406 212 410 234 403 256 393 275 384 284 374 270 368 248 370 224 365 207 Z",
+"M 466 131 L 479 138 484 150 477 161 466 155 Z",
+"M 500 94 L 520 84 541 89 560 98 579 109 594 122 586 136 572 141 556 133 541 128 526 119 511 117 Z",
+"M 567 209 L 581 216 589 229 584 240 573 236 565 225 Z",
+"M 608 253 L 621 259 626 272 618 282 607 276 Z",
+"M 266 85 L 279 80 290 85 288 98 278 104 268 99 Z"
 ];
-export function renderMap(svg, marker=null, pulse=false){
-  const NS="http://www.w3.org/2000/svg";
-  svg.innerHTML="";
-  const mk=(tag,attrs={})=>{const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));return e};
-  const grid=mk("g",{stroke:"#6c8158","stroke-width":"1","opacity":".28"});
-  for(let x=0;x<=640;x+=32)grid.appendChild(mk("path",{d:`M${x} 0V330`}));for(let y=0;y<=330;y+=22)grid.appendChild(mk("path",{d:`M0 ${y}H640`}));
-  svg.appendChild(grid);
-  const landGroup=mk("g",{fill:"#354535",stroke:"#354535","stroke-width":"7","stroke-linejoin":"miter"});
-  land.forEach(poly=>{let points=poly.map(([x,y])=>`${x*1.08+5},${y*1.2+15}`).join(" ");landGroup.appendChild(mk("polygon",{points}))});
-  svg.appendChild(landGroup);
-  // A few isolated pixel islands and texture blocks.
-  const flecks=[[85,72],[90,78],[107,57],[124,123],[208,69],[237,75],[270,66],[359,68],[388,72],[421,91],[459,131],[514,57],[538,140],[580,183]];
-  flecks.forEach(([x,y],i)=>svg.appendChild(mk("rect",{x:x*1.08+5,y:y*1.2+15,width:i%3===0?8:4,height:i%3===0?5:4,fill:"#354535"})));
-  const markers=[["AM",82,94],["EU",248,76],["AF",277,145],["AS",411,91],["OC",567,185]];
-  markers.forEach(([t,x,y])=>{const label=mk("text",{x:x*1.08+5,y:y*1.2+15,fill:"#c8d59c","font-family":"monospace","font-size":"10","font-weight":"bold"});label.textContent=t;svg.appendChild(label)});
-  if(marker){
-    let x=((marker.lon+180)/360)*640,y=((90-marker.lat)/180)*330;
-    let g=mk("g",{transform:`translate(${x},${y})`});
-    if(pulse)g.appendChild(mk("circle",{r:"10",fill:"none",stroke:"#d16f53","stroke-width":"2",opacity:".6"}));
-    g.appendChild(mk("rect",{x:"-3",y:"-3",width:"6",height:"6",fill:"#d16f53",stroke:"#17231f","stroke-width":"1"}));
-    svg.appendChild(g);
-  }
+export function drawAtlas(svg,guess=null,correct=null){
+ const ns="http://www.w3.org/2000/svg";svg.innerHTML="";
+ const add=(tag,attrs={})=>{let e=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);svg.appendChild(e);return e};
+ // Subtle latitude curves, not a grid
+ [130,205,280,355].forEach(y=>add("path",{d:`M 35 ${y} Q 440 ${y-15} 865 ${y}`,fill:"none",stroke:"#b8b7a5","stroke-width":"0.7","stroke-dasharray":"2 7"}));
+ paths.forEach((d,i)=>{add("path",{d,fill:"#d0d0b7",stroke:"#687c68","stroke-width":"1.5","stroke-linejoin":"round"});});
+ // imperfect coastal hatch marks / land stipple
+ const specks=[[120,103],[143,120],[170,98],[194,128],[210,114],[208,155],[202,220],[218,251],[350,109],[366,131],[390,116],[411,140],[426,126],[441,133],[385,222],[390,245],[516,103],[550,119],[572,126],[581,223],[611,266]];
+ specks.forEach(([x,y],i)=>add("rect",{x,y,width:i%4===0?3:2,height:i%4===0?3:2,fill:"#7f927a",opacity:".65"}));
+ // tiny hand-set labels
+ [["N. AMERICA",146,135],["S. AMERICA",213,245],["EUROPA",379,129],["AFRICA",390,214],["ASIA",526,132],["OCEANIA",583,252]].forEach(([t,x,y])=>{let e=add("text",{x,y,fill:"#7b826f","font-size":"9","font-family":"monospace","letter-spacing":"1.4"});e.textContent=t});
+ if(guess){const x=(guess.lon+180)/360*900,y=(90-guess.lat)/180*470;add("circle",{cx:x,cy:y,r:5,fill:"#b9543f"});add("circle",{cx:x,cy:y,r:10,fill:"none",stroke:"#b9543f","stroke-width":"1","stroke-dasharray":"2 3"})}
+ if(correct){const x=(correct.lon+180)/360*900,y=(90-correct.lat)/180*470;add("circle",{cx:x,cy:y,r:4,fill:"#b9543f"})}
 }

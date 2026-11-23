@@ -1,71 +1,61 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#17231f">
-  <title>LOST SIGNAL — capitale sconosciuta</title>
+  <meta name="theme-color" content="#eee8d9">
+  <title>Capitale — atlante di luoghi</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="cabinet">
-    <div class="cabinet-rivet rivet-a"></div><div class="cabinet-rivet rivet-b"></div>
-    <header class="masthead">
-      <div class="brand-lockup"><span class="brand-icon">⌁</span><div><div class="brand">LOST SIGNAL</div><div class="brand-sub">FIELD UNIT 04 · CARTOGRAPHY DEPT.</div></div></div>
-      <div class="build">NO. <span id="missionNo">000</span><br><span id="dateStamp">--/--/--</span></div>
+  <main class="page">
+    <header class="mast">
+      <a class="wordmark" href="#" aria-label="Capitale">capitale<span>·</span></a>
+      <div class="edition">UN GIOCO DI GEOGRAFIA<br>EDIZIONE QUOTIDIANA <span id="edition">001</span></div>
+      <button class="sound" id="sound" aria-label="Attiva audio" title="Audio">♫ <small>suono off</small></button>
     </header>
     <section class="intro">
-      <div class="eyebrow"><span class="live-dot"></span> TRANSMISSION FOUND</div>
-      <h1>Somewhere,<br><em>someone</em> is waiting.</h1>
-      <p>Una capitale. Sei coordinate sbagliate, o una giusta.<br>La radio non sa dove sei. Prova a darle un nome.</p>
+      <p class="date" id="date">—</p>
+      <h1>Un posto.<br><i>Da qualche parte.</i></h1>
+      <p class="lead">Una capitale si nasconde. Sei tentativi per trovarla.<br>Il mondo è grande: comincia da dove vuoi.</p>
     </section>
-
-    <section class="game-frame" aria-label="Gioco">
-      <div class="frame-top"><span>● CARTOGRAPHIC RECEIVER</span><span id="modeReadout">MODE: STANDARD</span></div>
-      <div class="map-wrap">
-        <div class="map-overlay overlay-top">SIGNAL / <span id="mapSignal">SEARCHING</span></div>
-        <svg id="worldMap" viewBox="0 0 640 330" role="img" aria-label="Mappa pixel art del mondo"></svg>
-        <div class="map-coords" id="coords">LAT -- / LON --</div>
-        <div class="scanline"></div>
+    <section class="atlas" aria-label="Mappa del mondo">
+      <div class="map" id="map">
+        <svg id="world" viewBox="0 0 900 470" aria-label="Planisfero illustrato" role="img"></svg>
+        <div class="map-caption"><span>ATLANTE DEI LUOGHI</span><span id="mapNote">TAV. 01 — IL MONDO</span></div>
       </div>
-      <div class="console-row">
-        <div class="attempt-label"><span>ATTEMPTS</span><strong id="attemptCount">00—06</strong></div>
-        <div class="attempt-track" id="attemptTrack" aria-label="Tentativi rimasti"></div>
+      <div class="scribble" id="scribble">parti da una città che conosci ↗</div>
+    </section>
+    <section class="play">
+      <div class="play-head">
+        <span class="section-label">LA TUA IPOTESI</span>
+        <span class="attempts" id="attempts">6 tentativi</span>
       </div>
-      <div class="mode-switch" role="group" aria-label="Modalità di gioco">
-        <button class="mode-btn active" id="standardBtn" type="button">STANDARD <small>km + direzione</small></button>
-        <button class="mode-btn" id="blindBtn" type="button">BLIND <small>solo fascia + direzione</small></button>
-        <button class="sound-btn" id="soundBtn" type="button" aria-label="Attiva suoni">♫ <span>OFF</span></button>
+      <div class="guess-wrap">
+        <form id="form">
+          <input id="city" list="suggestions" autocomplete="off" placeholder="Scrivi una capitale…" aria-label="Inserisci capitale">
+          <datalist id="suggestions"></datalist>
+          <button type="submit" aria-label="Invia risposta">↗</button>
+        </form>
       </div>
-      <form class="guess-form" id="guessForm">
-        <label for="capitalInput">DECODE CITY NAME</label>
-        <div class="input-line">
-          <input id="capitalInput" autocomplete="off" list="capitalSuggestions" placeholder="Digita una capitale..." spellcheck="false">
-          <datalist id="capitalSuggestions"></datalist>
-          <button type="submit" class="submit-btn" aria-label="Invia">↵</button>
-        </div>
-        <div class="input-foot"><span>ENTER ↵ TO TRANSMIT</span><span id="inputHint">NO COUNTRY NAMES</span></div>
-      </form>
-      <div class="console-message" id="message" aria-live="polite"><span class="prompt">&gt;</span> Ricevitore acceso. In attesa della prima trasmissione<span class="cursor">_</span></div>
-      <div class="hint-slot" id="hintSlot"></div>
+      <div class="feedback" id="feedback">Scegli una città. Ti dirò quanto sei lontano.</div>
+      <div class="mode">
+        <button id="classic" class="chosen">distanza + direzione</button>
+        <span>·</span>
+        <button id="blind">solo indizi</button>
+      </div>
     </section>
-
-    <section class="log-section">
-      <div class="section-head"><span>FIELD NOTES /</span><span>LIVE LOG</span></div>
-      <div id="guessLog" class="guess-log"><div class="empty-log">Il taccuino è vuoto. Nessuna traccia ancora.</div></div>
+    <section class="notes">
+      <div class="notes-head"><span>IL TACCUINO</span><span id="logCount">nessuna traccia</span></div>
+      <div id="log" class="log"><p class="empty">Le tue annotazioni appariranno qui, una alla volta.</p></div>
     </section>
-
-    <section class="result-card hidden" id="resultCard">
-      <div class="result-stamp" id="resultStamp">SIGNAL RECOVERED</div>
-      <h2 id="resultTitle">La trasmissione è chiara.</h2>
-      <p id="resultText"></p>
-      <button class="share-btn" id="shareBtn">COPIA IL FIELD LOG ↗</button>
+    <section class="outcome hidden" id="outcome">
+      <p class="stamp" id="stamp">TROVATA</p>
+      <h2 id="outTitle"></h2>
+      <p id="outText"></p>
+      <button id="copy">copia il taccuino ↗</button>
     </section>
-
-    <footer class="footer">
-      <div>MADE OF STATIC &amp; CURIOSITY</div>
-      <div><span class="footer-spark">✳</span> KEEP WANDERING</div>
-    </footer>
+    <footer><span>BUON VIAGGIO, OVUNQUE.</span><span>✳</span></footer>
   </main>
   <script type="module" src="src/main.js"></script>
 </body>
