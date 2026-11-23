@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eee8d9">
+  <meta name="description" content="Una capitale si nasconde. Sei tentativi per trovarla: un piccolo atlante quotidiano.">
   <title>Capitale — atlante di luoghi</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="page">
     <header class="mast">
-      <a class="wordmark" href="#" aria-label="Capitale">capitale<span>·</span></a>
+      <a class="wordmark" href="./" aria-label="Capitale, torna all'inizio">capitale<span>·</span></a>
       <div class="edition">UN GIOCO DI GEOGRAFIA<br>EDIZIONE QUOTIDIANA <span id="edition">001</span><br>SEED <span id="seedLabel">—</span></div>
       <button class="sound" id="sound" aria-label="Attiva audio" title="Audio">♫ <small>suono off</small></button>
     </header>
@@ -21,7 +22,7 @@
     </section>
     <section class="atlas" aria-label="Mappa del mondo">
       <div class="map" id="map">
-        <svg id="world" viewBox="0 0 900 470" aria-label="Planisfero illustrato" role="img"></svg>
+        <svg id="world" viewBox="0 0 900 470" aria-label="Planisfero illustrato" role="img" focusable="false"></svg>
         <div class="map-caption"><span>ATLANTE DEI LUOGHI</span><span id="mapNote">TAV. 01 — IL MONDO</span></div>
       </div>
       <div class="scribble" id="scribble">parti da una città che conosci ↗</div>
@@ -33,16 +34,16 @@
       </div>
       <div class="guess-wrap">
         <form id="form">
-          <input id="city" list="suggestions" autocomplete="off" placeholder="Scrivi una capitale…" aria-label="Inserisci capitale">
+          <input id="city" name="capital" list="suggestions" autocomplete="off" placeholder="Scrivi una capitale…" aria-label="Inserisci una capitale" aria-describedby="feedback" spellcheck="false">
           <datalist id="suggestions"></datalist>
           <button type="submit" aria-label="Invia risposta">↗</button>
         </form>
       </div>
-      <div class="feedback" id="feedback">Scegli una città. Ti dirò quanto sei lontano.</div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite" aria-atomic="true">Scegli una città. Ti dirò quanto sei lontano.</div>
       <div class="mode">
-        <button id="classic" class="chosen">distanza + direzione</button>
+        <button id="classic" class="chosen" type="button" aria-pressed="true">distanza + direzione</button>
         <span>·</span>
-        <button id="blind">solo indizi</button>
+        <button id="blind" type="button" aria-pressed="false">solo indizi</button>
       </div>
     </section>
     <section class="notes">
@@ -53,18 +54,18 @@
       <p class="stamp" id="stamp">TROVATA</p>
       <h2 id="outTitle"></h2>
       <p id="outText"></p>
-      <button id="copy">copia il taccuino ↗</button>
-      <button id="practice" class="hidden">un altro viaggio · pratica ↗</button>
+      <button id="copy" type="button">copia il taccuino ↗</button>
+      <button id="practice" class="hidden" type="button">un altro viaggio · pratica ↗</button>
     </section>
     <footer><span>BUON VIAGGIO, OVUNQUE.</span><span>✳</span></footer>
   </main>
-  <aside class="sound-prompt hidden" id="soundPrompt" aria-modal="true" role="dialog" aria-labelledby="soundPromptTitle">
+  <aside class="sound-prompt hidden" id="soundPrompt" aria-hidden="true" aria-modal="true" role="dialog" aria-labelledby="soundPromptTitle" aria-describedby="soundPromptDescription">
     <div class="prompt-paper">
       <div class="prompt-mark">◉ &nbsp; FREQUENZA CAPITALE</div>
       <h2 id="soundPromptTitle">Accendiamo<br><i>la radio?</i></h2>
-      <p>Piccoli suoni da un’altra epoca: pulsanti, segnali, un pizzico di arcade anni ’80 e ’90. Puoi cambiare idea quando vuoi.</p>
-      <button id="soundYes">♫ &nbsp; sì, accendi i suoni</button>
-      <button id="soundNo">continua in silenzio ↗</button>
+      <p id="soundPromptDescription">Piccoli suoni da un’altra epoca: pulsanti, segnali, un pizzico di arcade anni ’80 e ’90. Puoi cambiare idea quando vuoi.</p>
+      <button id="soundYes" type="button">♫ &nbsp; sì, accendi i suoni</button>
+      <button id="soundNo" type="button">continua in silenzio ↗</button>
     </div>
   </aside>
   <script type="module" src="src/main.js"></script>
