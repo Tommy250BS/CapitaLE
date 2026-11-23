@@ -9,7 +9,7 @@ function append(svg, tagName, attributes = {}) {
   return node;
 }
 
-// Mollweide is an equal-area projection suited to the atlas's world view.
+
 function project(longitude, latitude) {
   const lambda = longitude * Math.PI / 180;
   const phi = latitude * Math.PI / 180;
@@ -43,7 +43,7 @@ function polygonPaths(geometry) {
       ? geometry.coordinates
       : [];
 
-  // Keep a polygon's rings in one path so even-odd filling preserves lakes and holes.
+  
   return polygons.map(rings => rings.map(ringPath).join(" "));
 }
 
@@ -102,7 +102,7 @@ export async function drawAtlas(svg, guess = null, correct = null) {
 
   try {
     const geography = await loadLand();
-    // Ignore a slow response if a more recent guess has already redrawn the map.
+    
     if (revision !== drawRevision || !svg.isConnected) return;
 
     geography.features.forEach(feature => {

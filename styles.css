@@ -298,7 +298,7 @@ footer span:last-child {
   .log-item { grid-template-columns: 22px 1fr auto 18px; gap: 5px; }
   .log-item .name { font-size: 17px; }
 }
-/* Radio opt-in: a little printed invitation, not a settings dialog */
+
 .sound-prompt {
   position:fixed;
   inset:0;
@@ -368,7 +368,7 @@ footer span:last-child {
   color:var(--muted);
 }
 
-/* Interaction and accessibility details. */
+
 :focus-visible {
   outline: 2px solid var(--red);
   outline-offset: 4px;
