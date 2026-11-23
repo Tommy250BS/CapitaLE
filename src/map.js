@@ -1,4 +1,4 @@
-// Hand-inked simplified continent outlines: intentionally organic, not a tiled vector UI.
+// Hand-inked simplified continent outlines
 const paths=[
 "M 73 112 L 95 91 123 74 151 68 177 75 192 91 213 101 225 121 217 137 204 144 196 163 183 176 169 178 153 171 145 158 129 153 115 143 105 129 89 125 78 120 Z",
 "M 201 184 L 216 190 231 209 236 230 229 247 218 269 211 288 200 300 191 286 185 266 188 245 184 222 189 205 Z",
