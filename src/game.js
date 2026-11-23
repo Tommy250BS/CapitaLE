@@ -37,7 +37,6 @@ export function distanceKm(from, to) {
     + Math.cos(latitudeFrom) * Math.cos(latitudeTo)
     * Math.sin(longitudeDelta / 2) ** 2;
 
-  // Floating-point rounding can put the haversine just outside [0, 1].
   const safeHaversine = Math.min(1, Math.max(0, haversine));
   const arc = 2 * Math.atan2(
     Math.sqrt(safeHaversine),
