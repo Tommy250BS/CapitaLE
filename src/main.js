@@ -54,7 +54,6 @@ function removeStorage(key) {
   try {
     window.localStorage.removeItem(key);
   } catch {
-    // Storage may be disabled; the current session can still run in memory.
   }
 }
 
@@ -352,7 +351,7 @@ function playSequence(notes) {
       playTone(context, frequency, startAt + offset, duration, waveform, volume);
     });
   } catch {
-    // Sound is an enhancement; an audio failure must never interrupt a round.
+    // an audio failure must never interrupt a round
   }
 }
 
