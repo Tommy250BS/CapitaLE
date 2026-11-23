@@ -50,3 +50,14 @@ h1 i{color:var(--blue);font-weight:400}
 footer{display:flex;justify-content:space-between;border-top:1px solid #bcb5a5;margin-top:25px;padding-top:11px;font:9px var(--mono);letter-spacing:.08em;color:#777669}
 footer span:last-child{color:var(--red)}
 @media(max-width:600px){.page{padding:23px 19px}.intro{padding-top:30px}.edition{font-size:8px}.scribble{font-size:13px;top:3px}h1{font-size:49px}.lead{font-size:12px}.map-caption{font-size:7px}.log-item{grid-template-columns:22px 1fr auto 18px;gap:5px}.log-item .name{font-size:17px}}
+/* Radio opt-in: a little printed invitation, not a settings dialog */
+.sound-prompt{position:fixed;inset:0;z-index:20;background:#282e2bba;display:grid;place-items:center;padding:22px;backdrop-filter:blur(2px)}
+.sound-prompt.hidden{display:none}
+.prompt-paper{width:min(410px,100%);background:var(--paper);padding:30px 28px 26px;box-shadow:0 20px 60px #171d1c55;position:relative;background-image:radial-gradient(#8d87762b .65px,transparent .65px);background-size:5px 5px}
+.prompt-paper:before{content:"";position:absolute;inset:9px;border:1px solid #bcb5a580;pointer-events:none}
+.prompt-mark{font:9px var(--mono);letter-spacing:.1em;color:var(--red)}
+.prompt-paper h2{font:400 42px/.95 var(--serif);margin:24px 0 12px;letter-spacing:-.03em}.prompt-paper h2 i{color:var(--blue);font-weight:400}
+.prompt-paper p{font:12px/1.75 var(--sans);color:#6b6b61;margin:0 0 23px;max-width:310px}
+.prompt-paper button{display:block;width:100%;padding:12px 10px;background:transparent;cursor:pointer;font:10px var(--mono);letter-spacing:.025em}
+#soundYes{background:var(--blue);color:var(--paper);border:1px solid var(--blue);margin-bottom:7px}
+#soundNo{border:1px solid #bcb5a5;color:var(--muted)}

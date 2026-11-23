@@ -5,7 +5,7 @@ const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").re
 const now=new Date(),key=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
 let seed=key.split("").reduce((n,c)=>(n*31+c.charCodeAt(0))>>>0,19);
 const target=CAPITALS[seed%CAPITALS.length],storageKey="capitale-daily-"+key;
-let guesses=[],mode="classic",finished=false,sound=false;
+let guesses=[],mode="classic",finished=false,sound=localStorage.getItem("capitale-sound")==="on",audioCtx=null;
 try{let saved=JSON.parse(localStorage.getItem(storageKey)||"null");if(saved){guesses=saved.guesses||[];mode=saved.mode||"classic";finished=!!saved.finished}}catch{}
 $("date").textContent=now.toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long",year:"numeric"}).toUpperCase();
 $("edition").textContent=String(seed%999+1).padStart(3,"0");
@@ -25,16 +25,25 @@ function render(){
  $("classic").disabled=guesses.length>0||finished;$("blind").disabled=guesses.length>0||finished;
  $("city").disabled=finished;$("form").querySelector("button").disabled=finished;
 }
-function finish(win){finished=true;$("outcome").classList.remove("hidden");$("stamp").textContent=win?"TROVATA":"LA MAPPA RESTA MUTA";$("outTitle").textContent=win?`Era ${target.city}.`:`La capitale era ${target.city}.`;$("outText").textContent=win?`${target.city}, ${target.country}. Hai seguito il filo giusto.`:"Il viaggio si ferma qui. Domani ci sarà un altro luogo.";drawAtlas($("world"),null,target);$("feedback").textContent=win?"La trasmissione si è fatta nitida.":"Il segnale è svanito.";persist();render()}
+function finish(win){finished=true;$("outcome").classList.remove("hidden");$("stamp").textContent=win?"TROVATA":"LA MAPPA RESTA MUTA";$("outTitle").textContent=win?`Era ${target.city}.`:`La capitale era ${target.city}.`;$("outText").textContent=win?`${target.city}, ${target.country}. Hai seguito il filo giusto.`:"Il viaggio si ferma qui. Domani ci sarà un altro luogo.";drawAtlas($("world"),null,target);$("feedback").textContent=win?"La trasmissione si è fatta nitida.":"Il segnale è svanito.";persist();render();soundFx(win?"win":"lose")}
 function submit(value){if(finished)return;let c=CAPITALS.find(c=>norm(c.city)===norm(value));if(!c){$("feedback").textContent="Questa città non è nel nostro atlante. Prova una capitale.";return}if(guesses.some(g=>norm(g.city)===norm(c.city))){$("feedback").textContent="Hai già annotato questa città.";return}
 let d=km(c,target),win=norm(c.city)===norm(target.city),dir=direction(c,target);guesses.push({city:c.city,km:Math.round(d),heat:heat(d),dir,win});$("city").value="";render();
 if(win){finish(true);return}if(guesses.length>=6){finish(false);return}
 $("feedback").textContent=mode==="classic"?`${heat(d)} · ${Math.round(d).toLocaleString("it-IT")} km · ${dir}`:`${heat(d)} · ${dir}`;
-drawAtlas($("world"),c);persist();if(sound)beep(d)}
+drawAtlas($("world"),c);persist();soundFx(win?"win":"guess",d)}
 $("form").addEventListener("submit",e=>{e.preventDefault();submit($("city").value.trim())});
 $("classic").onclick=()=>{if(guesses.length||finished)return;mode="classic";persist();render()};
 $("blind").onclick=()=>{if(guesses.length||finished)return;mode="blind";persist();render()};
-function beep(value){try{const ctx=new(window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.type="square";osc.frequency.value=Math.max(220,Math.min(900,400+value/20));gain.gain.setValueAtTime(.035,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.12);osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.12);osc.onended=()=>ctx.close()}catch{}}
-$("sound").onclick=()=>{sound=!sound;$("sound").innerHTML=`♫ <small>suono ${sound?"on":"off"}</small>`;if(sound)beep(900)};
+function audio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function tone(freq,at,duration=.09,wave="square",vol=.025){const c=audio(),o=c.createOscillator(),g=c.createGain();o.type=wave;o.frequency.setValueAtTime(freq,at);g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(vol,at+.008);g.gain.exponentialRampToValueAtTime(.0001,at+duration);o.connect(g);g.connect(c.destination);o.start(at);o.stop(at+duration+.02)}
+function sequence(notes){try{const c=audio();notes.forEach(([f,t,d,w,v])=>tone(f,c.currentTime+t,d||.09,w||"square",v||.025))}catch{}}
+function soundFx(type,value=0){if(!sound)return;switch(type){case"start":sequence([[523,0,.07,"square"],[784,.09,.08,"square"],[1046,.19,.12,"triangle",.035]]);break;case"guess":{let base=value<150?880:value<500?660:value<1500?523:value<3500?392:value<7000?294:220;sequence([[base,0,.08,"square"],[base*.75,.08,.09,"triangle"]]);break}case"win":sequence([[523,0,.1,"triangle"],[659,.1,.1,"triangle"],[784,.2,.12,"triangle"],[1046,.34,.22,"sine",.04],[1318,.53,.3,"sine",.04]]);break;case"lose":sequence([[392,0,.13,"triangle"],[330,.14,.13,"triangle"],[262,.29,.18,"triangle"],[196,.48,.28,"sine"]]);break;case"toggle":sequence([[740,0,.06,"square"],[980,.07,.11,"triangle"]]);break}}
+function updateSoundButton(){$("sound").innerHTML=`♫ <small>suono ${sound?"on":"off"}</small>`;$("sound").setAttribute("aria-label",sound?"Disattiva audio":"Attiva audio")}
+function setSound(on){sound=on;localStorage.setItem("capitale-sound",on?"on":"off");updateSoundButton();if(on)soundFx("start")}
+if(!localStorage.getItem("capitale-sound-choice"))$("soundPrompt").classList.remove("hidden");
+$("soundYes").onclick=()=>{$("soundPrompt").classList.add("hidden");localStorage.setItem("capitale-sound-choice","yes");setSound(true)};
+$("soundNo").onclick=()=>{$("soundPrompt").classList.add("hidden");localStorage.setItem("capitale-sound-choice","no");setSound(false)};
+$("sound").onclick=()=>{setSound(!sound);localStorage.setItem("capitale-sound-choice","yes")};
+updateSoundButton();
 $("copy").onclick=async()=>{let text=`CAPITALE · ${key}\n${guesses.map(g=>g.win?"🟩":mode==="classic"?`▫ ${g.km} km ${g.dir}`:`▫ ${g.heat} ${g.dir}`).join("\n")}`;try{await navigator.clipboard.writeText(text);$("outText").textContent="Taccuino copiato. Passalo a un altro viaggiatore."}catch{$("outText").textContent=text}};
 render();if(guesses.length) $("feedback").textContent="Partita ripresa dal taccuino.";if(finished)finish(guesses.some(g=>g.win));
