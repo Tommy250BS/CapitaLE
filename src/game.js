@@ -1,4 +1,4 @@
-/** Pure game rules. Kept separate from the browser interface so they can be tested. */
+/** Game rules live here, balls */
 export const MAX_GUESSES = 6;
 
 export function normalizeCity(value) {
